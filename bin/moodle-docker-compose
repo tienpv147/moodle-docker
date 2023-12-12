@@ -30,10 +30,10 @@ else
   dockercompose="docker-compose"
 fi
 dockercompose="${dockercompose} -f ${basedir}/base.yml"
-dockercompose="${dockercompose} -f ${basedir}/service.mail.yml"
+#dockercompose="${dockercompose} -f ${basedir}/service.mail.yml"
 
 # PHP Version.
-export MOODLE_DOCKER_PHP_VERSION=${MOODLE_DOCKER_PHP_VERSION:-8.0}
+export MOODLE_DOCKER_PHP_VERSION=${MOODLE_DOCKER_PHP_VERSION:-7.4}
 
 # Database flavour.
 dockercompose="${dockercompose} -f ${basedir}/db.${MOODLE_DOCKER_DB}.yml"
@@ -122,86 +122,86 @@ then
     fi
 fi
 
-# Selenium browser
-browserparts=(${MOODLE_DOCKER_BROWSER//:/ })
-export MOODLE_DOCKER_BROWSER_NAME=${browserparts[0]}
-export MOODLE_DOCKER_BROWSER_TAG=${browserparts[1]}
-
-if [[ -z "$MOODLE_DOCKER_BROWSER_NAME" ]];
-then
-    MOODLE_DOCKER_BROWSER_NAME=firefox
-fi
-
-if [[ -z "$MOODLE_DOCKER_BROWSER_TAG" ]];
-then
-    if [[ "$MOODLE_DOCKER_BROWSER_NAME" = "firefox" ]];
-    then
-        MOODLE_DOCKER_BROWSER_TAG=3
-    elif [[ "$MOODLE_DOCKER_BROWSER_NAME" = "chrome" ]];
-    then
-        MOODLE_DOCKER_BROWSER_TAG=3
-    fi
-fi
-
-# Mobile app for development
-if [[ "$MOODLE_DOCKER_BROWSER_NAME" == "chrome" ]];
-then
-    if [[ ! -z "$MOODLE_DOCKER_APP_PATH" ]];
-    then
-        dockercompose="${dockercompose} -f ${basedir}/moodle-app-dev-$MOODLE_DOCKER_APP_RUNTIME.yml"
-    elif [[ ! -z "$MOODLE_DOCKER_APP_VERSION" ]];
-    then
-        # Mobile app using a docker image
-        dockercompose="${dockercompose} -f ${basedir}/moodle-app-$MOODLE_DOCKER_APP_RUNTIME.yml"
-    fi
-fi
-
-if [[ "$MOODLE_DOCKER_BROWSER_NAME" != "firefox" ]];
-then
-    dockercompose="${dockercompose} -f ${basedir}/selenium.${MOODLE_DOCKER_BROWSER_NAME}.yml"
-fi
-
-# Selenium VNC port
-export MOODLE_DOCKER_SELENIUM_SUFFIX=""
-if [[ $MOODLE_DOCKER_SELENIUM_VNC_PORT == *":"* ]] || [[ $MOODLE_DOCKER_SELENIUM_VNC_PORT -gt 0 ]]
-then
-    export MOODLE_DOCKER_SELENIUM_SUFFIX="-debug"
-    # If no bind ip has been configured (bind_ip:port), default to 127.0.0.1
-    if [[ ! $MOODLE_DOCKER_SELENIUM_VNC_PORT == *":"* ]]
-    then
-        MOODLE_DOCKER_SELENIUM_VNC_PORT=127.0.0.1:$MOODLE_DOCKER_SELENIUM_VNC_PORT
-    fi
-    dockercompose="${dockercompose} -f ${basedir}/selenium.debug.yml"
-fi
-
-# External services
-if [[ ! -z "$MOODLE_DOCKER_PHPUNIT_EXTERNAL_SERVICES" ]];
-then
-    dockercompose="${dockercompose} -f ${basedir}/phpunit-external-services.yml"
-fi
-
-# BBB Mock
-if [[ ! -z "$MOODLE_DOCKER_BBB_MOCK" ]];
-then
-    dockercompose="${dockercompose} -f ${basedir}/bbb-mock.yml"
-fi
-
-# Matrix Mock
-if [[ ! -z "$MOODLE_DOCKER_MATRIX_MOCK" ]];
-then
-    dockercompose="${dockercompose} -f ${basedir}/matrix-mock.yml"
-fi
-
-#  Faildump directory
-if [[ ! -z "$MOODLE_DOCKER_BEHAT_FAILDUMP" ]];
-then
-    if [ ! -d "$MOODLE_DOCKER_BEHAT_FAILDUMP" ];
-    then
-        echo 'Error: $MOODLE_DOCKER_BEHAT_FAILDUMP is not an existing directory'
-        exit 1
-    fi
-    dockercompose="${dockercompose} -f ${basedir}/behat-faildump.yml"
-fi
+## Selenium browser
+#browserparts=(${MOODLE_DOCKER_BROWSER//:/ })
+#export MOODLE_DOCKER_BROWSER_NAME=${browserparts[0]}
+#export MOODLE_DOCKER_BROWSER_TAG=${browserparts[1]}
+#
+#if [[ -z "$MOODLE_DOCKER_BROWSER_NAME" ]];
+#then
+#    MOODLE_DOCKER_BROWSER_NAME=firefox
+#fi
+#
+#if [[ -z "$MOODLE_DOCKER_BROWSER_TAG" ]];
+#then
+#    if [[ "$MOODLE_DOCKER_BROWSER_NAME" = "firefox" ]];
+#    then
+#        MOODLE_DOCKER_BROWSER_TAG=3
+#    elif [[ "$MOODLE_DOCKER_BROWSER_NAME" = "chrome" ]];
+#    then
+#        MOODLE_DOCKER_BROWSER_TAG=3
+#    fi
+#fi
+#
+## Mobile app for development
+#if [[ "$MOODLE_DOCKER_BROWSER_NAME" == "chrome" ]];
+#then
+#    if [[ ! -z "$MOODLE_DOCKER_APP_PATH" ]];
+#    then
+#        dockercompose="${dockercompose} -f ${basedir}/moodle-app-dev-$MOODLE_DOCKER_APP_RUNTIME.yml"
+#    elif [[ ! -z "$MOODLE_DOCKER_APP_VERSION" ]];
+#    then
+#        # Mobile app using a docker image
+#        dockercompose="${dockercompose} -f ${basedir}/moodle-app-$MOODLE_DOCKER_APP_RUNTIME.yml"
+#    fi
+#fi
+#
+#if [[ "$MOODLE_DOCKER_BROWSER_NAME" != "firefox" ]];
+#then
+#    dockercompose="${dockercompose} -f ${basedir}/selenium.${MOODLE_DOCKER_BROWSER_NAME}.yml"
+#fi
+#
+## Selenium VNC port
+#export MOODLE_DOCKER_SELENIUM_SUFFIX=""
+#if [[ $MOODLE_DOCKER_SELENIUM_VNC_PORT == *":"* ]] || [[ $MOODLE_DOCKER_SELENIUM_VNC_PORT -gt 0 ]]
+#then
+#    export MOODLE_DOCKER_SELENIUM_SUFFIX="-debug"
+#    # If no bind ip has been configured (bind_ip:port), default to 127.0.0.1
+#    if [[ ! $MOODLE_DOCKER_SELENIUM_VNC_PORT == *":"* ]]
+#    then
+#        MOODLE_DOCKER_SELENIUM_VNC_PORT=127.0.0.1:$MOODLE_DOCKER_SELENIUM_VNC_PORT
+#    fi
+#    dockercompose="${dockercompose} -f ${basedir}/selenium.debug.yml"
+#fi
+#
+## External services
+#if [[ ! -z "$MOODLE_DOCKER_PHPUNIT_EXTERNAL_SERVICES" ]];
+#then
+#    dockercompose="${dockercompose} -f ${basedir}/phpunit-external-services.yml"
+#fi
+#
+## BBB Mock
+#if [[ ! -z "$MOODLE_DOCKER_BBB_MOCK" ]];
+#then
+#    dockercompose="${dockercompose} -f ${basedir}/bbb-mock.yml"
+#fi
+#
+## Matrix Mock
+#if [[ ! -z "$MOODLE_DOCKER_MATRIX_MOCK" ]];
+#then
+#    dockercompose="${dockercompose} -f ${basedir}/matrix-mock.yml"
+#fi
+#
+##  Faildump directory
+#if [[ ! -z "$MOODLE_DOCKER_BEHAT_FAILDUMP" ]];
+#then
+#    if [ ! -d "$MOODLE_DOCKER_BEHAT_FAILDUMP" ];
+#    then
+#        echo 'Error: $MOODLE_DOCKER_BEHAT_FAILDUMP is not an existing directory'
+#        exit 1
+#    fi
+#    dockercompose="${dockercompose} -f ${basedir}/behat-faildump.yml"
+#fi
 
 # Webserver host
 export MOODLE_DOCKER_WEB_HOST=${MOODLE_DOCKER_WEB_HOST:-localhost}
@@ -219,11 +219,11 @@ then
 fi
 
 
-# Mac OS Compatbility
-if [[ "$(uname)" == "Darwin" ]]; then
-    # Support https://docs.docker.com/docker-for-mac/osxfs-caching/
-    dockercompose="${dockercompose} -f ${basedir}/volumes-cached.yml"
-fi
+## Mac OS Compatbility
+#if [[ "$(uname)" == "Darwin" ]]; then
+#    # Support https://docs.docker.com/docker-for-mac/osxfs-caching/
+#    dockercompose="${dockercompose} -f ${basedir}/volumes-cached.yml"
+#fi
 
 # Apply local customisations if a local.yml is found.
 # Note: This must be the final modification before the docker-compose command is called.
